@@ -1,0 +1,69 @@
+%bc = 0;
+clear all
+nx = 50;
+ny = 50;
+G = sparse(nx*ny,nx*ny); 
+
+for i = 1:nx
+    for j = 1:ny
+        n = j+(i-1)*ny;
+        
+        if i == j%diagonal
+            G(n,n) = 1;
+        elseif i == 1%bottom boudary
+            G(n,n) = 1;
+        elseif j == 1%left boundary
+            G(n,n) = 1;
+        elseif i == nx%top boudary
+            G(n,n) = 1;
+        elseif j == ny%right boundary
+            G(n,n) = 1;
+             elseif (i>10 && i<20 && j>10 && j<20)
+            nxm = j+(i-2)*ny;
+            nxp = j+(i)*ny;
+            nyp = j+1+(i-1)*ny;
+            nym = j-1+(i-1)*ny;
+            
+            G(n,nxm) = 1;
+            G(n,nxp) = 1;
+            G(n,nym) = 1;
+            G(n,nyp) = 1;
+            G(n,n) = -2;
+        else %rest of matrix
+            nxm = j+(i-2)*ny;
+            nxp = j+(i)*ny;
+            nyp = j+1+(i-1)*ny;
+            nym = j-1+(i-1)*ny;
+            
+            G(n,nxm) = 1;
+            G(n,nxp) = 1;
+            G(n,nym) = 1;
+            G(n,nyp) = 1;
+            G(n,n) = -4;
+            
+ 
+        end
+            
+     
+    end
+end
+
+figure(1);
+spy(G);
+
+[E,D] = eigs(G,9,'SM');
+
+figure(2);
+plot(diag(D))
+
+for i = 1:nx
+    for j = 1:ny
+         n = j+(i-1)*ny;
+         
+         re = E(n,9);
+         remap(i,j) = re;
+    end
+end
+
+figure(3);
+surf(remap)
